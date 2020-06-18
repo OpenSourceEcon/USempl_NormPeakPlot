@@ -1,0 +1,9 @@
+name: usempl-npp-dev
+dependencies:
+- python>=3.7.4
+- numpy>=1.18.1
+- pandas>=1.0.3
+- pandas-datareader>=0.8.1
+- bokeh>=2.0.2
+- pytest
+- coverage
