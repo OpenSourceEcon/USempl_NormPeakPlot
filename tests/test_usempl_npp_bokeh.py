@@ -2,7 +2,7 @@
 Tests of usempl_npp_bokey.py module
 
 Three main tests:
-* make sure that running the module as a script python djia_npp_bokey.py
+* make sure that running the module as a script python usempl_npp_bokeh.py
   results in a saved html file and two csv data files in the correct
   directories
 * data files are created with both download_from_internet==True and
@@ -34,12 +34,12 @@ def validate(date_text):
 # two datasets
 # def test_html_fig_script():
 #     script = pathlib.Path(__file__, '..',
-#                           'scripts').resolve().glob('djia_npp_bokeh.py')
+#                           'scripts').resolve().glob('usempl_npp_bokeh.py')
 #     runpy.run_path(script)
 #     assert fig
 
-# Test that djia_npp() function returns html figure and valid string and saves
-# html figure file and two csv files.
+# Test that usempl_npp() function returns html figure and valid string and
+# saves html figure file and two csv files.
 @pytest.mark.parametrize('frwd_mths_main', [12])
 @pytest.mark.parametrize('bkwd_mths_main', [2])
 @pytest.mark.parametrize('frwd_mths_max', [96])
@@ -55,7 +55,7 @@ def test_html_fig(frwd_mths_main, bkwd_mths_main, frwd_mths_max, bkwd_mths_max,
         pytest.skip('Invalid case')
         assert True
     else:
-        fig, end_date_str = usempl.djia_npp(
+        fig, end_date_str = usempl.usempl_npp(
             frwd_mths_main=frwd_mths_main, bkwd_mths_main=bkwd_mths_main,
             frwd_mths_max=frwd_mths_max, bkwd_mths_max=bkwd_mths_max,
             usempl_end_date=usempl_end_date,
@@ -64,5 +64,5 @@ def test_html_fig(frwd_mths_main, bkwd_mths_main, frwd_mths_max, bkwd_mths_max,
         assert fig
         assert validate(end_date_str)
     # assert html file exists
-    # assert djia series csv file exists
-    # assert djia ColumnDataSource source DataFrame csv file exists
+    # assert usempl series csv file exists
+    # assert usempl ColumnDataSource source DataFrame csv file exists
