@@ -1,14 +1,15 @@
 '''
-This module downloads the Dow Jones Industrial Average (DJIA) daily closing
-price data series from either Stooq.com or from this directory and
-organizes it into 15 series, one for each of the last 15 recessions--
-from the current 2020 Coronavirus recession to the Great Depression of
-1929. It then creates a normalized peak plot of the DJIA for each of the last
-15 recessions using the Bokeh plotting library.
+This module downloads the U.S. total nonfarm payrolls seasonally adjusted
+(PAYEMS) monthly time series from the St. Louis Federal Reserve's FRED system
+(https://fred.stlouisfed.org/series/PAYEMS) or loads it from this directory and
+organizes it into 15 series, one for each of the last 15 recessions--from the
+current 2020 Coronavirus recession to the Great Depression of 1929. It then
+creates a normalized peak plot of the PAYEMS data for each of the last 15
+recessions using the Bokeh plotting library.
 
 This module defines the following function(s):
-    get_djia_data()
-    djia_npp()
+    get_usempl_data()
+    usempl_npp()
 '''
 # Import packages
 import numpy as np
@@ -27,30 +28,32 @@ Define functions
 '''
 
 
-def get_djia_data(frwd_days_max, bkwd_days_max, end_date_str,
-                  download_from_internet=True):
+def get_usempl_data(frwd_mths_max, bkwd_mths_max, end_date_str,
+                    download_from_internet=True):
     '''
-    This function either downloads or reads in the DJIA data series and adds
-    variables days_frm_peak and close_dv_pk for each of the last 15 recessions.
+    This function either downloads or reads in the U.S. total nonfarm payrolls
+    seasonally adjusted monthly data series (PAYEMS) and adds variables
+    mths_frm_peak and empl_dv_pk for each of the last 15 recessions.
 
     Args:
-        frwd_days_max (int): maximum number of days forward from the peak to
-            plot
-        bckwd_days_max (int): maximum number of days backward from the peak to
-            plot
-        end_date_str (str): end date of DJIA time series in 'YYYY-mm-dd' format
-        download_from_internet (bool): =True if download data from Stooq.com,
-            otherwise read date in from local directory
+        frwd_mths_max (int): maximum number of months forward from the peak
+            month to plot
+        bckwd_mths_max (int): maximum number of months backward from the peak
+            month to plot
+        end_date_str (str): end date of PAYEMS time series in 'YYYY-mm-dd'
+            format
+        download_from_internet (bool): =True if download data from
+            fred.stlouisfed.org, otherwise read data in from local directory
 
     Other functions and files called by this function:
-        djia_close_[yyyy-mm-dd].csv
+        usempl_[yyyy-mm-dd].csv
 
     Files created by this function:
-        djia_close_[yyyy-mm-dd].csv
-        djia_close_pk_[yyyy-mm-dd].csv
+        usempl_[yyyy-mm-dd].csv
+        usempl_pk_[yyyy-mm-dd].csv
 
     Returns:
-        djia_close_pk (DataFrame): N x 46 DataFrame of days_frm_peak, Date{i},
+        usempl_pk (DataFrame): N x 46 DataFrame of mths_frm_peak, Date{i},
             Close{i}, and close_dv_pk{i} for each of the 15 recessions for the
             periods specified by bkwd_days_max and frwd_days_max
         end_date_str2 (str): actual end date of DJIA time series in
@@ -83,35 +86,64 @@ def get_djia_data(frwd_days_max, bkwd_days_max, end_date_str,
     if not os.access(data_dir, os.F_OK):
         os.makedirs(data_dir)
 
-    filename_basic = ('data/djia_close_' + end_date_str + '.csv')
-    filename_full = ('data/djia_close_pk_' + end_date_str + '.csv')
+    filename_basic = ('data/usempl_' + end_date_str + '.csv')
+    filename_full = ('data/usempl_pk_' + end_date_str + '.csv')
 
     if download_from_internet:
-        # Download the DJIA data directly from Stooq.com
+        # Download the employment data directly from fred.stlouisfed.org
         # (requires internet connection)
-        start_date = dt.datetime(1896, 5, 27)
-        djia_df = pddr.stooq.StooqDailyReader(symbols='^DJI',
-                                              start=start_date,
-                                              end=end_date).read()
-        djia_close = djia_df['Close']
-        djia_close = pd.DataFrame(djia_close).sort_index()  # Sort old to new
-        djia_close = djia_close.reset_index(level=['Date'])
-        end_date_str2 = djia_close['Date'].iloc[-1].strftime('%Y-%m-%d')
+        start_date = dt.datetime(1939, 1, 1)
+        usempl_df = pddr.fred.FredReader(symbols='PAYEMS', start=start_date,
+                                         end=end_date).read()
+        usempl_df = pd.DataFrame(usempl_df).sort_index()  # Sort old to new
+        usempl_df = usempl_df.reset_index(level=['DATE'])
+        usempl_df = usempl_df.rename(columns={'DATE': 'Date'})
+        end_date_str2 = usempl_df['Date'].iloc[-1].strftime('%Y-%m-%d')
         end_date = dt.datetime.strptime(end_date_str2, '%Y-%m-%d')
-        filename_basic = ('data/djia_close_' + end_date_str2 + '.csv')
-        filename_full = ('data/djia_close_pk_' + end_date_str2 + '.csv')
-        djia_close.to_csv(filename_basic, index=False)
+        filename_basic = ('data/usempl_' + end_date_str2 + '.csv')
+        filename_full = ('data/usempl_pk_' + end_date_str2 + '.csv')
+        usempl_df.to_csv(filename_basic, index=False)
+        # Merge in U.S. annual average nonfarm payroll employment (not
+        # seasonally adjusted) 1919-1938. Date values for annual data are set
+        # to July 1 of that year. These data are taken from Table 1 on page 1
+        # of "Employment, Hours, and Earnings, United States, 1909-90, Volume
+        # I," Bulletin of the United States Bureau of Labor Statistics, No.
+        # 2370, March 1991.
+        # <https://fraser.stlouisfed.org/title/employment-earnings-united-
+        # states-189/employment-hours-earnings-united-states-1909-90-5435/
+        # content/pdf/emp_bmark_1909_1990_v1>
+        filename_annual = ('data/usempl_anual_1919-1938.csv')
+        ann_data_file_path = os.path.join(cur_path, filename_annual)
+        usempl_ann_df = pd.read_csv(ann_data_file_path,
+                                    names=['Date', 'PAYEMS'],
+                                    parse_dates=['Date'], skiprows=1,
+                                    na_values=['.', 'na', 'NaN'])
+        usempl_df = usempl_df.append(usempl_ann_df, ignore_index=True)
+        usempl_df = usempl_df.sort_values(by='Date')
+        usempl_df = usempl_df.reset_index(drop=True)
+        usempl_df.to_csv(filename_basic, index=False)
+        # Add other months to annual data 1919-01-01 to 1938-12-01 and fill in
+        # artificial employment data by cubic spline interpolation
+        months_df = \
+            pd.DataFrame(pd.date_range('1919-01-01', '1938-12-01', freq='MS'),
+                         columns=['Date'])
+        usempl_df = pd.merge(usempl_df, months_df, left_on='Date',
+                             right_on='Date', how='outer')
+        usempl_df = usempl_df.sort_values(by='Date')
+        usempl_df = usempl_df.reset_index(drop=True)
+        usempl_df['PAYEMS'].iloc[:242] = \
+            usempl_df['PAYEMS'].iloc[:242].interpolate(method='cubic')
     else:
         # Import the data as pandas DataFrame
         end_date_str2 = end_date_str
         data_file_path = os.path.join(cur_path, filename_basic)
-        djia_close = pd.read_csv(data_file_path,
-                                 names=['Date', 'Close'],
-                                 parse_dates=['Date'], skiprows=1,
-                                 na_values=['.', 'na', 'NaN'])
-        djia_close = djia_close.dropna()
+        usempl_df = pd.read_csv(data_file_path, names=['Date', 'PAYEMS'],
+                                parse_dates=['Date'], skiprows=1,
+                                na_values=['.', 'na', 'NaN'])
+        usempl_df = usempl_df.dropna()
 
-    print('End date of DJIA series is', end_date.strftime('%Y-%m-%d'))
+    print('End date of U.S. employment series is',
+          end_date.strftime('%Y-%m-%d'))
 
     # Set recession-specific parameters
     rec_label_yr_lst = \
@@ -152,76 +184,76 @@ def get_djia_data(frwd_days_max, bkwd_days_max, end_date_str,
                          'Nov 1973', 'Jan 1980', 'Jul 1981', 'Jul 1990',
                          'Mar 2001', 'Dec 2007', 'Feb 2020']
 
-    maxdate_rng_lst = [('1929-7-1', '1929-10-30'),
-                       ('1937-3-1', '1937-7-1'),
-                       ('1945-1-1', '1945-4-1'),
-                       ('1948-9-1', '1949-1-31'),
-                       ('1953-5-1', '1953-9-30'),
-                       ('1957-6-1', '1957-10-31'),
-                       ('1959-12-1', '1960-7-1'),
-                       ('1969-10-1', '1970-1-31'),
-                       ('1973-9-1', '1973-12-31'),
+    maxdate_rng_lst = [('1929-7-1', '1929-10-1'),
+                       ('1937-7-1', '1937-7-1'),
+                       ('1945-1-1', '1945-3-1'),
+                       ('1948-9-1', '1949-1-1'),
+                       ('1953-6-1', '1953-8-1'),
+                       ('1957-7-1', '1957-9-1'),
+                       ('1960-3-1', '1960-5-1'),
+                       ('1969-11-1', '1970-3-1'),
+                       ('1973-10-1', '1974-7-1'),
                        ('1979-12-1', '1980-3-1'),
-                       ('1981-6-1', '1981-8-30'),
-                       ('1990-6-1', '1991-8-31'),
-                       ('2001-1-25', '2001-4-30'),
-                       ('2007-10-1', '2008-1-31'),
-                       ('2020-2-1', '2020-3-15')]
+                       ('1981-6-1', '1981-8-1'),
+                       ('1990-6-1', '1991-8-1'),
+                       ('2001-2-1', '2001-4-1'),
+                       ('2007-11-1', '2008-1-1'),
+                       ('2020-1-1', '2020-3-1')]
 
     # Create normalized peak series for each recession
-    djia_close_pk = \
-        pd.DataFrame(np.arange(-bkwd_days_max, frwd_days_max + 1, dtype=int),
-                     columns=['days_frm_peak'])
-    djia_close_pk_long = djia_close.copy()
+    usempl_pk = \
+        pd.DataFrame(np.arange(-bkwd_mths_max, frwd_mths_max + 1, dtype=int),
+                     columns=['mths_frm_peak'])
+    usempl_pk_long = usempl_df.copy()
     peak_vals = []
     peak_dates = []
     for i, maxdate_rng in enumerate(maxdate_rng_lst):
-        # Identify peak closing value within two months (with only ?
+        # Identify peak closing value within two months (with only 2
         # exceptions) of the beginning month of the recession
         peak_val = \
-            djia_close['Close'][(djia_close['Date'] >= maxdate_rng[0]) &
-                                (djia_close['Date'] <=
-                                 maxdate_rng[1])].max()
+            usempl_df['PAYEMS'][(usempl_df['Date'] >= maxdate_rng[0]) &
+                                (usempl_df['Date'] <= maxdate_rng[1])].max()
         peak_vals.append(peak_val)
-        close_dv_pk_name = 'close_dv_pk' + str(i)
-        djia_close_pk_long[close_dv_pk_name] = (djia_close_pk_long['Close'] /
-                                                peak_val)
-        # Identify date of peak closing value within two months (with
-        # only ? exceptions) of the beginning month of the recession
+        usempl_dv_pk_name = 'usempl_dv_pk' + str(i)
+        usempl_pk_long[usempl_dv_pk_name] = (usempl_pk_long['PAYEMS'] /
+                                             peak_val)
+        # Identify date of peak PAYEMS value within two months (with
+        # only 2 exceptions) of the beginning month of the recession
         peak_date = \
-            djia_close['Date'][(djia_close['Date'] >= maxdate_rng[0]) &
-                               (djia_close['Date'] <= maxdate_rng[1]) &
-                               (djia_close['Close'] == peak_val)].max()
+            usempl_df['Date'][(usempl_df['Date'] >= maxdate_rng[0]) &
+                              (usempl_df['Date'] <= maxdate_rng[1]) &
+                              (usempl_df['PAYEMS'] == peak_val)].max()
         peak_dates.append(peak_date.strftime('%Y-%m-%d'))
-        days_frm_pk_name = 'days_frm_pk' + str(i)
-        djia_close_pk_long[days_frm_pk_name] = (djia_close_pk_long['Date'] -
-                                                peak_date).dt.days
+        mths_frm_pk_name = 'mths_frm_pk' + str(i)
+        usempl_pk_long[mths_frm_pk_name] = \
+            ((usempl_pk_long['Date'].dt.year - peak_date.year) * 12 +
+             (usempl_pk_long['Date'].dt.month - peak_date.month))
+        # usempl_pk_long[mths_frm_pk_name] = (usempl_pk_long['Date'] -
+        #                                     peak_date).dt.years
         print('peak_val ' + str(i) + ' is', peak_val, 'on date',
               peak_date.strftime('%Y-%m-%d'), '(Beg. rec. month:',
               rec_beg_yrmth_lst[i], ')')
-        # I need to merge the data into this new djia_close_pk DataFrame
-        # because weekends make these data have missing points relative to the
-        # initial left DataFrame
-        djia_close_pk = \
-            pd.merge(djia_close_pk,
-                     djia_close_pk_long[[days_frm_pk_name, 'Date', 'Close',
-                                         close_dv_pk_name]],
-                     left_on='days_frm_peak', right_on=days_frm_pk_name,
+        # I need to merge the data into this new usempl_pk DataFrame so that
+        # mths_frm_peak variable is shared across the dataframe
+        usempl_pk = \
+            pd.merge(usempl_pk,
+                     usempl_pk_long[[mths_frm_pk_name, 'Date', 'PAYEMS',
+                                     usempl_dv_pk_name]],
+                     left_on='mths_frm_peak', right_on=mths_frm_pk_name,
                      how='left')
-        djia_close_pk.drop(columns=[days_frm_pk_name], inplace=True)
-        djia_close_pk.rename(
-            columns={'Date': f'Date{i}', 'Close': f'Close{i}'}, inplace=True)
+        usempl_pk.drop(columns=[mths_frm_pk_name], inplace=True)
+        usempl_pk.rename(
+            columns={'Date': f'Date{i}', 'PAYEMS': f'PAYEMS{i}'}, inplace=True)
 
-    djia_close_pk.to_csv(filename_full, index=False)
+    usempl_pk.to_csv(filename_full, index=False)
 
-    return (djia_close_pk, end_date_str2, peak_vals, peak_dates,
-            rec_label_yr_lst, rec_label_yrmth_lst, rec_beg_yrmth_lst,
-            maxdate_rng_lst)
+    return (usempl_pk, end_date_str2, peak_vals, peak_dates, rec_label_yr_lst,
+            rec_label_yrmth_lst, rec_beg_yrmth_lst, maxdate_rng_lst)
 
 
-def djia_npp(frwd_mths_main=6, bkwd_mths_main=1, frwd_mths_max=12,
-             bkwd_mths_max=3, djia_end_date='today',
-             download_from_internet=True, html_show=True):
+def usempl_npp(frwd_mths_main=12, bkwd_mths_main=2, frwd_mths_max=96,
+               bkwd_mths_max=48, usempl_end_date='today',
+               download_from_internet=True, html_show=True):
     '''
     This function creates the HTML and JavaScript code for the dynamic
     visualization of the normalized peak plot of the last 15 recessions in the
@@ -237,20 +269,22 @@ def djia_npp(frwd_mths_main=6, bkwd_mths_main=1, frwd_mths_max=12,
             allow for the plot, to be seen by zooming out
         bkwd_mths_max (int): maximum number of months backward from the peak to
             allow for the plot, to be seen by zooming out
-        djia_end_date (str): either 'today' or the end date of DJIA time series
-            in 'YYYY-mm-dd' format
-        download_from_internet (bool): =True if download data from Stooq.com,
-            otherwise read date in from local directory
+        usempl_end_date (str): either 'today' or the end date of PAYEMS time
+            series in 'YYYY-mm-dd' format
+        download_from_internet (bool): =True if download data from St. Louis
+            Federal Reserve's FRED system
+            (https://fred.stlouisfed.org/series/PAYEMS), otherwise read data in
+            from local directory
         html_show (bool): =True if open dynamic visualization in browser once
             created
 
     Other functions and files called by this function:
-        get_djia_data()
+        get_usempl_data()
 
     Files created by this function:
-       images/DJIA_NPP_mth_[yyyy-mm-dd].html
+       images/usempl_[yyyy-mm-dd].html
 
-    Returns: None
+    Returns: fig, end_date_str
     '''
     # Create directory if images directory does not already exist
     cur_path = os.path.split(os.path.abspath(__file__))[0]
@@ -259,159 +293,155 @@ def djia_npp(frwd_mths_main=6, bkwd_mths_main=1, frwd_mths_max=12,
     if not os.access(image_dir, os.F_OK):
         os.makedirs(image_dir)
 
-    if djia_end_date == 'today':
+    if usempl_end_date == 'today':
         end_date = dt.date.today()  # Go through today
     else:
-        end_date = dt.datetime.strptime(djia_end_date, '%Y-%m-%d')
+        end_date = dt.datetime.strptime(usempl_end_date, '%Y-%m-%d')
 
     end_date_str = end_date.strftime('%Y-%m-%d')
 
     # Set main window and total data limits for monthly plot
     frwd_mths_main = int(frwd_mths_main)
     bkwd_mths_main = int(bkwd_mths_main)
-    frwd_days_main = int(np.round(frwd_mths_main * 364.25 / 12))
-    bkwd_days_main = int(np.round(bkwd_mths_main * 364.25 / 12))
     frwd_mths_max = int(frwd_mths_max)
     bkwd_mths_max = int(bkwd_mths_max)
-    frwd_days_max = int(np.round(frwd_mths_max * 364.25 / 12))
-    bkwd_days_max = int(np.round(bkwd_mths_max * 364.25 / 12))
 
-    (djia_close_pk, end_date_str2, peak_vals, peak_dates, rec_label_yr_lst,
+    (usempl_pk, end_date_str2, peak_vals, peak_dates, rec_label_yr_lst,
         rec_label_yrmth_lst, rec_beg_yrmth_lst, maxdate_rng_lst) = \
-        get_djia_data(frwd_days_max, bkwd_days_max, end_date_str,
-                      download_from_internet)
+        get_usempl_data(frwd_mths_max, bkwd_mths_max, end_date_str,
+                        download_from_internet)
     if end_date_str2 != end_date_str:
-        print('Updated end_date_str to ' + end_date_str2 + ' because ' +
-              'original end_date_str ' + end_date_str + ' data was not ' +
-              'available from Stooq.com')
-        end_date_str = end_date_str2
-        end_date = dt.datetime.strptime(end_date_str, '%Y-%m-%d')
+        print('PAYEMS data downloaded on ' + end_date_str + ' has most ' +
+              'recent PAYEMS data month of ' + end_date_str2 + '.')
+    end_date2 = dt.datetime.strptime(end_date_str2, '%Y-%m-%d')
 
     rec_cds_list = []
     min_main_val_lst = []
     max_main_val_lst = []
     for i in range(15):
-        djia_close_pk_rec = \
-            djia_close_pk[['days_frm_peak', f'Date{i}', f'Close{i}',
-                           f'close_dv_pk{i}']].dropna()
-        djia_close_pk_rec.rename(
-                columns={f'Date{i}': 'Date', f'Close{i}': 'Close',
-                         f'close_dv_pk{i}': 'close_dv_pk'}, inplace=True)
-        rec_cds_list.append(ColumnDataSource(djia_close_pk_rec))
-        # Find minimum and maximum close_dv_pk values as inputs to main plot
+        usempl_pk_rec = \
+            usempl_pk[['mths_frm_peak', f'Date{i}', f'PAYEMS{i}',
+                       f'usempl_dv_pk{i}']].dropna()
+        usempl_pk_rec.rename(
+            columns={f'Date{i}': 'Date', f'PAYEMS{i}': 'PAYEMS',
+                     f'usempl_dv_pk{i}': 'usempl_dv_pk'}, inplace=True)
+        rec_cds_list.append(ColumnDataSource(usempl_pk_rec))
+        # Find minimum and maximum usempl_dv_pk values as inputs to main plot
         # frame size
         min_main_val_lst.append(
-            djia_close_pk_rec['close_dv_pk'][
-                (djia_close_pk_rec['days_frm_peak'] >= -bkwd_days_main) &
-                (djia_close_pk_rec['days_frm_peak'] <= frwd_days_main)].min())
+            usempl_pk_rec['usempl_dv_pk'][
+                (usempl_pk_rec['mths_frm_peak'] >= -bkwd_mths_main) &
+                (usempl_pk_rec['mths_frm_peak'] <= frwd_mths_main)].min())
         max_main_val_lst.append(
-            djia_close_pk_rec['close_dv_pk'][
-                (djia_close_pk_rec['days_frm_peak'] >= -bkwd_days_main) &
-                (djia_close_pk_rec['days_frm_peak'] <= frwd_days_main)].max())
+            usempl_pk_rec['usempl_dv_pk'][
+                (usempl_pk_rec['mths_frm_peak'] >= -bkwd_mths_main) &
+                (usempl_pk_rec['mths_frm_peak'] <= frwd_mths_main)].max())
 
-    # Create Bokeh plot of DJIA normalized peak plot figure
-    fig_title = 'Progression of DJIA in last 15 recessions'
-    filename = ('images/DJIA_NPP_mth_' + end_date_str + '.html')
+    # Create Bokeh plot of PAYEMS normalized peak plot figure
+    fig_title = 'Progression of PAYEMS in last 15 recessions'
+    filename = ('images/usempl_npp_' + end_date_str2 + '.html')
     output_file(filename, title=fig_title)
 
     # Format the tooltip
     tooltips = [('Date', '@Date{%F}'),
-                ('Days from peak', '$x{0.}'),
-                ('Closing value', '@Close{0,0.00}'),
-                ('Fraction of peak', '@close_dv_pk{0.0 %}')]
+                ('Months from peak', '$x{0.}'),
+                ('Employment', '@PAYEMS{0,0.},000'),
+                ('Fraction of peak', '@usempl_dv_pk{0.0 %}')]
 
-    # Solve for minimum and maximum DJIA/Peak values in monthly main display
+    # Solve for minimum and maximum PAYEMS/Peak values in monthly main display
     # window in order to set the appropriate xrange and yrange
     min_main_val = min(min_main_val_lst)
     max_main_val = max(max_main_val_lst)
 
     datarange_main_vals = max_main_val - min_main_val
-    datarange_main_days = int(np.round((frwd_mths_main + bkwd_mths_main) *
-                                       364.25 / 12))
-    fig_buffer_pct = 0.07
-    fig = figure(plot_height=450,
+    datarange_main_mths = int(frwd_mths_main + bkwd_mths_main)
+    fig_buffer_pct = 0.10
+    fig = figure(plot_height=500,
                  plot_width=800,
                  x_axis_label='Months from Peak',
-                 y_axis_label='DJIA as fraction of Peak',
+                 y_axis_label='PAYEMS as fraction of Peak',
                  y_range=(min_main_val - fig_buffer_pct * datarange_main_vals,
                           max_main_val + fig_buffer_pct * datarange_main_vals),
-                 x_range=((-np.round(bkwd_mths_main * 364.25 / 12) -
-                          fig_buffer_pct * datarange_main_days),
-                          (np.round(frwd_mths_main * 364.25 / 12) +
-                          fig_buffer_pct * datarange_main_days)),
+                 x_range=((-bkwd_mths_main -
+                           fig_buffer_pct * datarange_main_mths),
+                          (frwd_mths_main +
+                           fig_buffer_pct * datarange_main_mths)),
                  tools=['save', 'zoom_in', 'zoom_out', 'box_zoom',
                         'pan', 'undo', 'redo', 'reset', 'hover', 'help'],
                  toolbar_location='left')
     fig.title.text_font_size = '18pt'
     fig.toolbar.logo = None
-    l0 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[0],
+    l0 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[0],
                   color='blue', line_width=5, alpha=0.7, muted_alpha=0.15)
-    l1 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[1],
+    l1 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[1],
                   color=Category20[13][0], line_width=2, alpha=0.7,
                   muted_alpha=0.15)
-    l2 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[2],
+    l2 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[2],
                   color=Category20[13][1], line_width=2, alpha=0.7,
                   muted_alpha=0.15)
-    l3 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[3],
+    l3 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[3],
                   color=Category20[13][2], line_width=2,
                   alpha=0.7, muted_alpha=0.15)
-    l4 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[4],
+    l4 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[4],
                   color=Category20[13][3], line_width=2, alpha=0.7,
                   muted_alpha=0.15)
-    l5 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[5],
+    l5 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[5],
                   color=Category20[13][4], line_width=2, alpha=0.7,
                   muted_alpha=0.15)
-    l6 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[6],
+    l6 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[6],
                   color=Category20[13][5], line_width=2, alpha=0.7,
                   muted_alpha=0.15)
-    l7 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[7],
+    l7 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[7],
                   color=Category20[13][6], line_width=2, alpha=0.7,
                   muted_alpha=0.15)
-    l8 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[8],
+    l8 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[8],
                   color=Category20[13][7], line_width=2, alpha=0.7,
                   muted_alpha=0.15)
-    l9 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[9],
+    l9 = fig.line(x='mths_frm_peak', y='usempl_dv_pk', source=rec_cds_list[9],
                   color=Category20[13][8], line_width=2, alpha=0.7,
                   muted_alpha=0.15)
-    l10 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[10],
-                   color=Category20[13][9], line_width=2, alpha=0.7,
-                   muted_alpha=0.15)
-    l11 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[11],
-                   color=Category20[13][10], line_width=2, alpha=0.7,
-                   muted_alpha=0.15)
-    l12 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[12],
-                   color=Category20[13][11], line_width=2, alpha=0.7,
-                   muted_alpha=0.15)
-    l13 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[13],
-                   color=Category20[13][12], line_width=2, alpha=0.7,
-                   muted_alpha=0.15)
-    l14 = fig.line(x='days_frm_peak', y='close_dv_pk', source=rec_cds_list[14],
-                   color='black', line_width=5, alpha=0.7, muted_alpha=0.15)
+    l10 = fig.line(x='mths_frm_peak', y='usempl_dv_pk',
+                   source=rec_cds_list[10], color=Category20[13][9],
+                   line_width=2, alpha=0.7, muted_alpha=0.15)
+    l11 = fig.line(x='mths_frm_peak', y='usempl_dv_pk',
+                   source=rec_cds_list[11], color=Category20[13][10],
+                   line_width=2, alpha=0.7, muted_alpha=0.15)
+    l12 = fig.line(x='mths_frm_peak', y='usempl_dv_pk',
+                   source=rec_cds_list[12], color=Category20[13][11],
+                   line_width=2, alpha=0.7, muted_alpha=0.15)
+    l13 = fig.line(x='mths_frm_peak', y='usempl_dv_pk',
+                   source=rec_cds_list[13], color=Category20[13][12],
+                   line_width=2, alpha=0.7, muted_alpha=0.15)
+    l14 = fig.line(x='mths_frm_peak', y='usempl_dv_pk',
+                   source=rec_cds_list[14], color='black', line_width=5,
+                   alpha=0.7, muted_alpha=0.15)
 
-    # Dashed vertical line at the peak DJIA value period
+    # Dashed vertical line at the peak PAYEMS value period
     fig.line(x=[0.0, 0.0], y=[-0.5, 2.0], color='black', line_width=2,
              line_dash='dashed', alpha=0.5)
 
-    # Dashed horizontal line at DJIA as fraction of peak equals 1
-    fig.line(x=[-np.round(bkwd_mths_max * 364.25 / 12),
-                np.round(frwd_mths_max * 364.25 / 12)], y=[1.0, 1.0],
+    # Dashed horizontal line at PAYEMS as fraction of peak equals 1
+    fig.line(x=[-bkwd_mths_max, frwd_mths_max], y=[1.0, 1.0],
              color='black', line_width=2, line_dash='dashed', alpha=0.5)
 
-    # Create the tick marks for the x-axis and set x-axis labels
-    days_frm_pk_mth = []
-    mths_frm_pk = []
-    for i in range(-bkwd_mths_max, frwd_mths_max + 1):
-        days_frm_pk_mth.append(int(np.round(i * 364.25 / 12)))
-        if i < 0:
-            mths_frm_pk.append(str(i) + 'mth')
-        elif i == 0:
-            mths_frm_pk.append('peak')
-        elif i > 0:
-            mths_frm_pk.append('+' + str(i) + 'mth')
+    # # Create the tick marks for the x-axis and set x-axis labels
+    # major_tick_labels = []
+    # major_tick_list = []
+    # for i in range(-bkwd_mths_max, frwd_mths_max + 1):
+    #     if i % 2 == 0:  # indicates even integer
+    #         major_tick_list.append(int(i))
+    #         if i < 0:
+    #             major_tick_labels.append(str(i) + 'mth')
+    #         elif i == 0:
+    #             major_tick_labels.append('peak')
+    #         elif i > 0:
+    #             major_tick_labels.append('+' + str(i) + 'mth')
 
-    mth_label_dict = dict(zip(days_frm_pk_mth, mths_frm_pk))
-    fig.xaxis.ticker = days_frm_pk_mth
-    fig.xaxis.major_label_overrides = mth_label_dict
+    # # minor_tick_list = [item for item in range(-bkwd_mths_max,
+    # #                                           frwd_mths_max + 1)]
+    # major_tick_dict = dict(zip(major_tick_list, major_tick_labels))
+    # fig.xaxis.ticker = major_tick_list
+    # fig.xaxis.major_label_overrides = major_tick_dict
 
     # Add legend
     legend = Legend(items=[(rec_label_yrmth_lst[0], [l0]),
@@ -447,13 +477,17 @@ def djia_npp(frwd_mths_main=6, bkwd_mths_main=1, frwd_mths_max=12,
     #                      background_fill_alpha=1.0))
 
     # Add title and subtitle to the plot
-    fig.add_layout(Title(text=fig_title, text_font_style='bold',
+    fig_title2 = 'Progression of U.S. total nonfarm employment'
+    fig_title3 = '(PAYEMS, seasonally adjusted) in last 15 recessions'
+    fig.add_layout(Title(text=fig_title3, text_font_style='bold',
+                         text_font_size='16pt', align='center'), 'above')
+    fig.add_layout(Title(text=fig_title2, text_font_style='bold',
                          text_font_size='16pt', align='center'), 'above')
 
     # Add source text below figure
     updated_date_str = end_date.strftime('%B %-d, %Y')
     fig.add_layout(Title(text='Source: Richard W. Evans (@RickEcon), ' +
-                              'historical DJIA data from Stooq.com, ' +
+                              'historical PAYEMS data from FRED and BLS, ' +
                               'updated ' + updated_date_str + '.',
                          align='left',
                          text_font_size='3mm',
@@ -473,4 +507,4 @@ def djia_npp(frwd_mths_main=6, bkwd_mths_main=1, frwd_mths_max=12,
 
 if __name__ == '__main__':
     # execute only if run as a script
-    fig, end_date_str = djia_npp()
+    fig, end_date_str = usempl_npp()
