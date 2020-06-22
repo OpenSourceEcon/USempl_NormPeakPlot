@@ -1,5 +1,5 @@
 '''
-Tests of djia_npp_bokey.py module
+Tests of usempl_npp_bokey.py module
 
 Three main tests:
 * make sure that running the module as a script python djia_npp_bokey.py
@@ -14,7 +14,7 @@ import datetime as dt
 # import os
 # import pathlib
 # import runpy
-import djia_npp_bokeh as djia
+import usempl_npp_bokeh as usempl
 
 
 # Create function to validate datetime text
@@ -40,25 +40,25 @@ def validate(date_text):
 
 # Test that djia_npp() function returns html figure and valid string and saves
 # html figure file and two csv files.
-@pytest.mark.parametrize('frwd_mths_main', [6])
-@pytest.mark.parametrize('bkwd_mths_main', [1])
-@pytest.mark.parametrize('frwd_mths_max', [12])
-@pytest.mark.parametrize('bkwd_mths_max', [4])
-@pytest.mark.parametrize('djia_end_date', ['today', '2020-06-09'])
+@pytest.mark.parametrize('frwd_mths_main', [12])
+@pytest.mark.parametrize('bkwd_mths_main', [2])
+@pytest.mark.parametrize('frwd_mths_max', [96])
+@pytest.mark.parametrize('bkwd_mths_max', [48])
+@pytest.mark.parametrize('usempl_end_date', ['today', '2020-04-09'])
 @pytest.mark.parametrize('download_from_internet', [True, False])
 @pytest.mark.parametrize('html_show', [False])
 def test_html_fig(frwd_mths_main, bkwd_mths_main, frwd_mths_max, bkwd_mths_max,
-                  djia_end_date, download_from_internet, html_show):
-    # The case when djia_end_date == 'today' and download_from_internet ==
+                  usempl_end_date, download_from_internet, html_show):
+    # The case when usempl_end_date == 'today' and download_from_internet ==
     # False must be skipped because we don't have the data saved for every date
-    if djia_end_date == 'today' and not download_from_internet:
+    if usempl_end_date == 'today' and not download_from_internet:
         pytest.skip('Invalid case')
         assert True
     else:
-        fig, end_date_str = djia.djia_npp(
+        fig, end_date_str = usempl.djia_npp(
             frwd_mths_main=frwd_mths_main, bkwd_mths_main=bkwd_mths_main,
             frwd_mths_max=frwd_mths_max, bkwd_mths_max=bkwd_mths_max,
-            djia_end_date=djia_end_date,
+            usempl_end_date=usempl_end_date,
             download_from_internet=download_from_internet,
             html_show=html_show)
         assert fig
