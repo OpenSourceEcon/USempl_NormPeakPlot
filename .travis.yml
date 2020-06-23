@@ -14,6 +14,7 @@ install:
   - conda create -n usempl-npp-dev python=$TRAVIS_PYTHON_VERSION
   - source activate usempl-npp-dev
   - conda env update -f environment.yml
+  - CODECOV_TOKEN="841f2d0d-c2d1-45c1-8e81-c37744d95b21"
 
 # command to run tests, e.g. python setup.py test
 script:

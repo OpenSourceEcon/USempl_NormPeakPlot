@@ -8,3 +8,4 @@ dependencies:
 - bokeh>=2.0.2
 - pytest
 - coverage
+- codecov
