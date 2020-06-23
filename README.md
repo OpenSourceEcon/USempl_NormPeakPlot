@@ -1,7 +1,7 @@
 [![OSE Lab cataloged](https://img.shields.io/badge/OSE%20Lab-catalogued-critical)](https://www.oselab.org/gallery)
 [![Python 3.7.4+](https://img.shields.io/badge/python-3.7.4%2B-blue.svg)](https://www.python.org/downloads/release/python-374/)
 [![Build Status](https://travis-ci.org/OpenSourceEcon/USempl_NormPeakPlot.svg?branch=master)](https://travis-ci.org/OpenSourceEcon/USempl_NormPeakPlot)
-[![Codecov](https://codecov.io/gh/OpenSourceEcon/USempl_NormPeakPlot/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenSourceEcon/USempl_NormPeakPlot)
+[![codecov](https://codecov.io/gh/OpenSourceEcon/USempl_NormPeakPlot/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenSourceEcon/USempl_NormPeakPlot)
 
 # Normalized Peak Plot of U.S. Nonfarm Payroll Employment (PAYEMS)
 The code in this repository allows the user to create a normalized peak plot of U.S. nonfarm payroll employment (PAYEMS, seasonally adjusted) over the last 15 recessions, from the Great Depression (Aug. 1929 to Mar. 1933) to the current COVID-19 recession (Feb. 2020 to present). The dynamic version of this plot, which is updated regularly, is available to manipulate and explore at [https://www.oselab.org/gallery/usempl_npp](https://www.oselab.org/gallery/usempl_npp). The core maintainer of this repository is [Richard Evans](https://sites.google.com/site/rickecon/) ([@RickEcon](https://github.com/rickecon)).
