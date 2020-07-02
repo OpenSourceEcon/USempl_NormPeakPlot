@@ -44,7 +44,7 @@ def validate(date_text):
 @pytest.mark.parametrize('bkwd_mths_main', [2])
 @pytest.mark.parametrize('frwd_mths_max', [96])
 @pytest.mark.parametrize('bkwd_mths_max', [48])
-@pytest.mark.parametrize('usempl_end_date', ['today', '2020-05-01'])
+@pytest.mark.parametrize('usempl_end_date', ['today', '2020-06-01'])
 @pytest.mark.parametrize('download_from_internet', [True, False])
 @pytest.mark.parametrize('html_show', [False])
 def test_html_fig(frwd_mths_main, bkwd_mths_main, frwd_mths_max, bkwd_mths_max,
