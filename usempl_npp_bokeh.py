@@ -251,7 +251,7 @@ def get_usempl_data(frwd_mths_max, bkwd_mths_max, end_date_str,
             rec_label_yrmth_lst, rec_beg_yrmth_lst, maxdate_rng_lst)
 
 
-def usempl_npp(frwd_mths_main=12, bkwd_mths_main=2, frwd_mths_max=135,
+def usempl_npp(frwd_mths_main=23, bkwd_mths_main=4, frwd_mths_max=135,
                bkwd_mths_max=48, usempl_end_date='today',
                download_from_internet=True, html_show=True):
     '''
