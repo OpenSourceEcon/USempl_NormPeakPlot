@@ -161,7 +161,7 @@ def get_usempl_data(frwd_mths_max, bkwd_mths_max, end_date_str,
          '1990-1991',  # (Jul 1990 - Mar 1991)
          '2001',       # (Mar 2001 - Nov 2001)
          '2007-2009',  # (Dec 2007 - Jun 2009) Great Recession
-         '2020-pres']  # (Feb 2020 - present) Coronavirus recession
+         '2020-2020']  # (Feb 2020 - Apr 2020) Coronavirus recession
 
     rec_label_yrmth_lst = ['Aug 1929 - Mar 1933',  # Great Depression
                            'May 1937 - Jun 1938',
@@ -177,7 +177,7 @@ def get_usempl_data(frwd_mths_max, bkwd_mths_max, end_date_str,
                            'Jul 1990 - Mar 1991',
                            'Mar 2001 - Nov 2001',
                            'Dec 2007 - Jun 2009',  # Great Recession
-                           'Feb 2020 - present']  # Coronavirus recess'n
+                           'Feb 2020 - Apr 2020']  # Coronavirus recess'n
 
     rec_beg_yrmth_lst = ['Aug 1929', 'May 1937', 'Feb 1945', 'Nov 1948',
                          'Jul 1953', 'Aug 1957', 'Apr 1960', 'Dec 1969',
