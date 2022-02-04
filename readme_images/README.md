@@ -1,8 +1,8 @@
 # Instructions for readme_images
-The images in this directory `USempl_NormPeakPlot/readme_images/` are used in the main repository [`README.md`](README.md). However, one image is only used for the GitHub social preview image. GitHub suggests that this image should be 1280x640px for best display. The Bokeh image produced by the code is 1620x1024px. We do the following to resize the image.
+The images in this directory `USempl_NormPeakPlot/readme_images/` are used in the main repository [`README.md`](README.md). However, one image is only used for the GitHub social preview image. GitHub suggests that this image should be 1280x640px for best display. The Bokeh image produced by the code is 1624x1026px. We do the following to resize the image.
 
 1. Open the image in Adobe Photoshop: **File** > **Open**
-2. Adjust the canvas size: **Image** > **Canvas Size**. Because the 1620x1024px image is taller than the optimal 1280x640px GitHub size, we first adjust the canvas size. We have to add some width. So here adjust the width to 2048px [`1024 * 2` or `1024 * (1280 / 640)`] and keep the height at 1024px.
+2. Adjust the canvas size: **Image** > **Canvas Size**. Because the 1624x1026px image is taller than the optimal 1280x640px GitHub size, we first adjust the canvas size. We have to add some width. So here adjust the width to 2052px [`1026 * 2` or `1026 * (1280 / 640)`] and keep the height at 1026px.
 3. Adjust the image size: **Image** > **Image Size**. Now adjust the image size to the GitHub optimal 1280x640px. The dimesions will be correct and nothing will be stretched.
 4. Save the image as [`usgdp_npp_gitfig.png`](readme_images/usgdp_npp_gitfig.png).
 5. Upload the image [`usgdp_npp_gitfig.png`](readme_images/usgdp_npp_gitfig.png) as the GitHub social preview image by clicking on the [**Settings**](https://github.com/OpenSourceEcon/USgdp_NormPeakPlot/settings) button in the upper-right of the main page of the repository and uploading the formatted image [`usgdp_npp_gitfig.png`](readme_images/usgdp_npp_gitfig.png) in the **Social preview** section.
