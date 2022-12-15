@@ -9,3 +9,4 @@ dependencies:
 - pytest>=7.1.2
 - coverage>=5.2.1
 - codecov>=2.1.9
+- black
