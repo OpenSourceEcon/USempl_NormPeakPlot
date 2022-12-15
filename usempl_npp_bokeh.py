@@ -118,7 +118,8 @@ def get_usempl_data(frwd_mths_max, bkwd_mths_max, end_date_str,
                                     names=['Date', 'PAYEMS'],
                                     parse_dates=['Date'], skiprows=1,
                                     na_values=['.', 'na', 'NaN'])
-        usempl_df = usempl_df.append(usempl_ann_df, ignore_index=True)
+        # usempl_df = usempl_df.append(usempl_ann_df, ignore_index=True)
+        usempl_df = pd.concat([usempl_ann_df, usempl_df], ignore_index=True)
         usempl_df = usempl_df.sort_values(by='Date')
         usempl_df = usempl_df.reset_index(drop=True)
         usempl_df.to_csv(filename_basic, index=False)
