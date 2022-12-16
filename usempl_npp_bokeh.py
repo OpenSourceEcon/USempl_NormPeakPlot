@@ -30,7 +30,10 @@ Define functions
 
 
 def get_usempl_data(
-    frwd_mths_max, bkwd_mths_max, end_date_str, download_from_internet=True
+    frwd_mths_max=135,
+    bkwd_mths_max=48,
+    end_date_str="2022-12-15",
+    download_from_internet=True,
 ):
     """
     This function either downloads or reads in the U.S. total nonfarm payrolls
