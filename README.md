@@ -41,7 +41,7 @@ The most standard way to successfully run this code if you are using the [Anacon
     ```
 8. Executing the function [`usempl_npp()`](usempl_npp/usempl_npp_bokeh.py#L310) will result in three output objects: the dynamic visualization HTML file, the original time series of the PAYEMS series, and the organized dataset of each recession's variables time series for the periods specified in the function inputs.
     * [**usempl_npp/images/usempl_npp_[YYYY-mm-dd].html**](usempl_npp/images/usempl_npp_2022-11-01.html). This is the dynamic visualization. The code in the file is a combination of HTML and JavaScript. You can view this visualization by opening the file in a web browser window. A version of this visualization is updated regularly on the web at [https://www.oselab.org/gallery/usempl_npp](https://www.oselab.org/gallery/usempl_npp).
-    * [**usempl_npp/data/usempl_[YYYY-mm-dd].csv**](usempl_npp/data/usempl_2022-11-01.csv). A comma separated values data file of the original time series of the PAYEMS series from 1919-01-01 to whatever end date is specified in the [`usempl_npp()`](usempl_npp/usempl_npp_bokeh.py#L254) function arguments, which end date is also the final 10 characters of the file name `YYYY-mm-dd`.
+    * [**usempl_npp/data/usempl_[YYYY-mm-dd].csv**](usempl_npp/data/usempl_2022-11-01.csv). A comma separated values data file of the original time series of the PAYEMS series from 1919-01-01 to whatever end date is specified in the [`usempl_npp()`](usempl_npp/usempl_npp_bokeh.py#L310) function arguments, which end date is also the final 10 characters of the file name `YYYY-mm-dd`.
     * [**usempl_npp/data/usempl_pk_[YYYY-mm-dd].csv**](usempl_npp/data/usempl_pk_2022-11-01.csv).
 
 ## 2. Functionality of the dynamic visualization
