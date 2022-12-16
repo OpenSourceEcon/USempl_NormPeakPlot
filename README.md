@@ -1,6 +1,6 @@
 [![OSE Lab cataloged](https://img.shields.io/badge/OSE%20Lab-catalogued-critical)](https://www.oselab.org/gallery)
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3108/)
-![Build Status](https://github.com/github/docs/actions/workflows/build_and_test.yml/badge.svg?event=push)
+![example branch parameter](https://github.com/github/docs/actions/workflows/build_and_test.yml/badge.svg?event=push)
 [![codecov](https://codecov.io/gh/OpenSourceEcon/USempl_NormPeakPlot/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenSourceEcon/USempl_NormPeakPlot)
 
 # Normalized Peak Plot of U.S. Nonfarm Payroll Employment (PAYEMS)
