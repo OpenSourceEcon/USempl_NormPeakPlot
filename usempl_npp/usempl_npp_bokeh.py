@@ -106,8 +106,8 @@ def get_usempl_data(
         usempl_df = usempl_df.rename(columns={"DATE": "Date"})
         end_date_str2 = usempl_df["Date"].iloc[-1].strftime("%Y-%m-%d")
         end_date = dt.datetime.strptime(end_date_str2, "%Y-%m-%d")
-        filename_basic = "./data/usempl_" + end_date_str2 + ".csv"
-        filename_full = "./data/usempl_pk_" + end_date_str2 + ".csv"
+        filename_basic = "data/usempl_" + end_date_str2 + ".csv"
+        filename_full = "data/usempl_pk_" + end_date_str2 + ".csv"
         usempl_df.to_csv(filename_basic, index=False)
         # Merge in U.S. annual average nonfarm payroll employment (not
         # seasonally adjusted) 1919-1938. Date values for annual data are set
@@ -118,7 +118,7 @@ def get_usempl_data(
         # <https://fraser.stlouisfed.org/title/employment-earnings-united-
         # states-189/employment-hours-earnings-united-states-1909-90-5435/
         # content/pdf/emp_bmark_1909_1990_v1>
-        filename_annual = "./data/usempl_anual_1919-1938.csv"
+        filename_annual = "data/usempl_anual_1919-1938.csv"
         ann_data_file_path = os.path.join(cur_path, filename_annual)
         usempl_ann_df = pd.read_csv(
             ann_data_file_path,
@@ -424,7 +424,7 @@ def usempl_npp(
 
     # Create Bokeh plot of PAYEMS normalized peak plot figure
     fig_title = "Progression of PAYEMS in last 15 recessions"
-    filename = "./images/usempl_npp_" + end_date_str2 + ".html"
+    filename = "images/usempl_npp_" + end_date_str2 + ".html"
     output_file(filename, title=fig_title)
 
     # Format the tooltip
