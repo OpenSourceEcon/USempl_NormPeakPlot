@@ -91,8 +91,8 @@ def get_usempl_data(
     if not os.access(data_dir, os.F_OK):
         os.makedirs(data_dir)
 
-    filename_basic = "data/usempl_" + end_date_str + ".csv"
-    filename_full = "data/usempl_pk_" + end_date_str + ".csv"
+    filename_basic = "usempl_" + end_date_str + ".csv"
+    filename_full = "usempl_pk_" + end_date_str + ".csv"
 
     if download_from_internet:
         # Download the employment data directly from fred.stlouisfed.org
@@ -106,9 +106,9 @@ def get_usempl_data(
         usempl_df = usempl_df.rename(columns={"DATE": "Date"})
         end_date_str2 = usempl_df["Date"].iloc[-1].strftime("%Y-%m-%d")
         end_date = dt.datetime.strptime(end_date_str2, "%Y-%m-%d")
-        filename_basic = "data/usempl_" + end_date_str2 + ".csv"
-        filename_full = "data/usempl_pk_" + end_date_str2 + ".csv"
-        usempl_df.to_csv(filename_basic, index=False)
+        filename_basic = "usempl_" + end_date_str2 + ".csv"
+        filename_full = "usempl_pk_" + end_date_str2 + ".csv"
+        usempl_df.to_csv(os.path.join(data_dir, filename_basic), index=False)
         # Merge in U.S. annual average nonfarm payroll employment (not
         # seasonally adjusted) 1919-1938. Date values for annual data are set
         # to July 1 of that year. These data are taken from Table 1 on page 1
@@ -131,7 +131,7 @@ def get_usempl_data(
         usempl_df = pd.concat([usempl_ann_df, usempl_df], ignore_index=True)
         usempl_df = usempl_df.sort_values(by="Date")
         usempl_df = usempl_df.reset_index(drop=True)
-        usempl_df.to_csv(filename_basic, index=False)
+        usempl_df.to_csv(os.path.join(data_dir, filename_basic), index=False)
         # Add other months to annual data 1919-01-01 to 1938-12-01 and fill in
         # artificial employment data by cubic spline interpolation
         months_df = pd.DataFrame(
@@ -149,7 +149,7 @@ def get_usempl_data(
     else:
         # Import the data as pandas DataFrame
         end_date_str2 = end_date_str
-        data_file_path = os.path.join(cur_path, filename_basic)
+        data_file_path = os.path.join(data_dir, filename_basic)
         usempl_df = pd.read_csv(
             data_file_path,
             names=["Date", "PAYEMS"],
@@ -293,7 +293,7 @@ def get_usempl_data(
             columns={"Date": f"Date{i}", "PAYEMS": f"PAYEMS{i}"}, inplace=True
         )
 
-    usempl_pk.to_csv(filename_full, index=False)
+    usempl_pk.to_csv(os.path.join(data_dir, filename_full), index=False)
 
     return (
         usempl_pk,
