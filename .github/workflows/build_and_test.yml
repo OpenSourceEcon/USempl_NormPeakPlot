@@ -32,6 +32,11 @@ jobs:
           pip install -e .
           pip install pytest-cov
           pip install pytest-pycodestyle
+      - name: Conda info and list
+        shell: bash -el {0}
+        run: |
+          conda info
+          conda list
       - name: Test
         shell: bash -l {0}
         working-directory: ./
