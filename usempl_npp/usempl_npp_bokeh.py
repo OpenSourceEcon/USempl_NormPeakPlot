@@ -118,8 +118,8 @@ def get_usempl_data(
         # <https://fraser.stlouisfed.org/title/employment-earnings-united-
         # states-189/employment-hours-earnings-united-states-1909-90-5435/
         # content/pdf/emp_bmark_1909_1990_v1>
-        filename_annual = "data/usempl_anual_1919-1938.csv"
-        ann_data_file_path = os.path.join(cur_path, filename_annual)
+        filename_annual = "usempl_anual_1919-1938.csv"
+        ann_data_file_path = os.path.join(data_dir, filename_annual)
         usempl_ann_df = pd.read_csv(
             ann_data_file_path,
             names=["Date", "PAYEMS"],
@@ -424,8 +424,8 @@ def usempl_npp(
 
     # Create Bokeh plot of PAYEMS normalized peak plot figure
     fig_title = "Progression of PAYEMS in last 15 recessions"
-    filename = "images/usempl_npp_" + end_date_str2 + ".html"
-    output_file(filename, title=fig_title)
+    filename = "usempl_npp_" + end_date_str2 + ".html"
+    output_file(os.path.join(image_dir, filename), title=fig_title)
 
     # Format the tooltip
     tooltips = [
