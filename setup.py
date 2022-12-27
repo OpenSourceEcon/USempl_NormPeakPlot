@@ -25,7 +25,6 @@ setuptools.setup(
     include_packages=True,
     python_requires=">=3.10.8",
     install_requires=[
-        "os",
         "numpy>=1.23.4",
         "scipy>=1.9.3",
         "pandas>=1.5.2",
