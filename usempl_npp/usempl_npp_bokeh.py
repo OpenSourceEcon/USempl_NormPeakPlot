@@ -104,7 +104,7 @@ def get_usempl_data(
         usempl_df = pd.DataFrame(usempl_df).sort_index()  # Sort old to new
         usempl_df = usempl_df.reset_index(level=["DATE"])
         usempl_df = usempl_df.rename(columns={"DATE": "Date"})
-        end_date_str2 = usempl_df["Date"].iloc[-1].dt.strftime("%Y-%m-%d")
+        end_date_str2 = usempl_df["Date"].iloc[-1].strftime("%Y-%m-%d")
         end_date = dt.datetime.strptime(end_date_str2, "%Y-%m-%d")
         filename_basic = "usempl_" + end_date_str2 + ".csv"
         filename_full = "usempl_pk_" + end_date_str2 + ".csv"
@@ -160,7 +160,7 @@ def get_usempl_data(
         usempl_df = usempl_df.dropna()
 
     print(
-        "End date of U.S. employment series is", end_date.dt.strftime("%Y-%m-%d")
+        "End date of U.S. employment series is", end_date.strftime("%Y-%m-%d")
     )
 
     # Set recession-specific parameters
@@ -261,7 +261,7 @@ def get_usempl_data(
             & (usempl_df["Date"] <= maxdate_rng[1])
             & (usempl_df["PAYEMS"] == peak_val)
         ].max()
-        peak_dates.append(peak_date.dt.strftime("%Y-%m-%d"))
+        peak_dates.append(peak_date.strftime("%Y-%m-%d"))
         mths_frm_pk_name = "mths_frm_pk" + str(i)
         usempl_pk_long[mths_frm_pk_name] = (
             usempl_pk_long["Date"].dt.year - peak_date.year
@@ -272,7 +272,7 @@ def get_usempl_data(
             "peak_val " + str(i) + " is",
             peak_val,
             "on date",
-            peak_date.dt.strftime("%Y-%m-%d"),
+            peak_date.strftime("%Y-%m-%d"),
             "(Beg. rec. month:",
             rec_beg_yrmth_lst[i],
             ")",
@@ -360,7 +360,7 @@ def usempl_npp(
     else:
         end_date = dt.datetime.strptime(usempl_end_date, "%Y-%m-%d")
 
-    end_date_str = end_date.dt.strftime("%Y-%m-%d")
+    end_date_str = end_date.strftime("%Y-%m-%d")
 
     # Set main window and total data limits for monthly plot
     frwd_mths_main = int(frwd_mths_main)
@@ -707,7 +707,7 @@ def usempl_npp(
     )
 
     # Add source text below figure
-    updated_date_str = end_date.dt.strftime("%B %-d, %Y")
+    updated_date_str = end_date.strftime("%B %-d, %Y")
     fig.add_layout(
         Title(
             text="Source: Richard W. Evans (@RickEcon), "
