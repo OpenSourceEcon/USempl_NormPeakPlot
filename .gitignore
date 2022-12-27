@@ -6,6 +6,7 @@ build/*
 dist/*
 _configtest.o.d
 *~
+*.egg-info/
 
 # LaTeX utility files
 *.aux
