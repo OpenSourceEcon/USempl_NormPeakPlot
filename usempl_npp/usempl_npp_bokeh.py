@@ -709,7 +709,7 @@ def usempl_npp(
     # Add source text below figure
     updated_date_str = (
         end_date.strftime("%B")
-        + ""
+        + " "
         + end_date.strftime("%d").lstrip("0")
         + ", "
         + end_date.strftime("%Y")
