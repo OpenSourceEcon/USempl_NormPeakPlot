@@ -35,8 +35,16 @@ def validate(date_text):
 def test_get_usempl_data(end_date_str="2022-12-15"):
     data_tuple = usempl.get_usempl_data(end_date_str=end_date_str)
     assert len(data_tuple) == 8
-    (usempl_pk, end_date_str2, peak_vals, peak_dates, rec_label_yr_lst,
-     rec_label_yrmth_lst, rec_beg_yrmth_lst, maxdate_rng_lst) = data_tuple
+    (
+        usempl_pk,
+        end_date_str2,
+        peak_vals,
+        peak_dates,
+        rec_label_yr_lst,
+        rec_label_yrmth_lst,
+        rec_beg_yrmth_lst,
+        maxdate_rng_lst,
+    ) = data_tuple
     assert usempl_pk.to_numpy().shape == (184, 46)
     assert end_date_str2 == "2022-11-01"
     assert len(peak_vals) == 15
