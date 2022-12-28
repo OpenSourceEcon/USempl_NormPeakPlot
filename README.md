@@ -35,14 +35,14 @@ The most standard way to successfully run this code if you are using the [Anacon
     * Run the [`usempl_npp_bokeh.py`](usempl_npp/usempl_npp_bokeh.py) module as a script with the default settings of the [`usempl_npp()`](usempl_npp/usempl_npp_bokeh.py#L310) function. This will produce the dynamic visualization in which the data are downloaded from the internet, the end date is either the month of the current day or the most recent month with PAYEMS data, and then the default months from peak.
     * Import the  [`usempl_npp_bokeh.py`](usempl_npp/usempl_npp_bokeh.py) module and execute the [`usempl_npp()`](usempl_npp/usempl_npp_bokeh.py#L310) function by typing something like the following:
     ```python
-    import usempl_npp_bokeh as usempl
+    from usempl_npp import usempl_npp_bokeh as usempl
 
     usempl.usempl_npp(14, 2, 18, 4, '2020-06-22')
     ```
 8. Executing the function [`usempl_npp()`](usempl_npp/usempl_npp_bokeh.py#L310) will result in three output objects: the dynamic visualization HTML file, the original time series of the PAYEMS series, and the organized dataset of each recession's variables time series for the periods specified in the function inputs.
     * [**usempl_npp/images/usempl_npp_[YYYY-mm-dd].html**](usempl_npp/images/usempl_npp_2022-11-01.html). This is the dynamic visualization. The code in the file is a combination of HTML and JavaScript. You can view this visualization by opening the file in a web browser window. A version of this visualization is updated regularly on the web at [https://www.oselab.org/gallery/usempl_npp](https://www.oselab.org/gallery/usempl_npp).
     * [**usempl_npp/data/usempl_[YYYY-mm-dd].csv**](usempl_npp/data/usempl_2022-11-01.csv). A comma separated values data file of the original time series of the PAYEMS series from 1919-01-01 to whatever end date is specified in the [`usempl_npp()`](usempl_npp/usempl_npp_bokeh.py#L310) function arguments, which end date is also the final 10 characters of the file name `YYYY-mm-dd`.
-    * [**usempl_npp/data/usempl_pk_[YYYY-mm-dd].csv**](usempl_npp/data/usempl_pk_2022-11-01.csv).
+    * [**usempl_npp/data/usempl_pk_[YYYY-mm-dd].csv**](usempl_npp/data/usempl_pk_2022-11-01.csv). Adjusted dataset of 15 different time series for their maximum months beginning to end, each containing the beginning of the recession (peak employment).
 
 ## 2. Functionality of the dynamic visualization
 This dynamic visualization allows the user to customize some different views and manipulations of the data using the following functionalities. The default view of the visualization is shown above.
