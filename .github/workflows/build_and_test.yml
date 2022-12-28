@@ -8,19 +8,20 @@ on:
 
 jobs:
   build:
-    runs-on: runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os:  [ubuntu-latest, windows-latest]
-        python-version: ['3.10']
+        os:  [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10"]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
           persist-credentials: false
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Setup Miniconda using Python ${{ matrix.python-version }}
+        uses: conda-incubator/setup-miniconda@v2
         with:
+          auto-update-conda: true
           activate-environment: usempl-npp-dev
           environment-file: environment.yml
           python-version: ${{ matrix.python-version }}
@@ -28,8 +29,14 @@ jobs:
       - name: Build
         shell: bash -l {0}
         run: |
+          pip install -e .
           pip install pytest-cov
           pip install pytest-pycodestyle
+      - name: Conda info and list
+        shell: bash -el {0}
+        run: |
+          conda info
+          conda list
       - name: Test
         shell: bash -l {0}
         working-directory: ./

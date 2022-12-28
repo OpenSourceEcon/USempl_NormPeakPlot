@@ -15,12 +15,10 @@ import datetime as dt
 # import os
 # import pathlib
 # import runpy
-import usempl_npp_bokeh as usempl
+from usempl_npp import usempl_npp_bokeh as usempl
 
 
 # Create function to validate datetime text
-
-
 def validate(date_text):
     try:
         if date_text != dt.datetime.strptime(date_text, "%Y-%m-%d").strftime(
@@ -32,13 +30,30 @@ def validate(date_text):
         return False
 
 
-# Test whether running the script of the module results in an html figure and
-# two datasets
-# def test_html_fig_script():
-#     script = pathlib.Path(__file__, '..',
-#                           'scripts').resolve().glob('usempl_npp_bokeh.py')
-#     runpy.run_path(script)
-#     assert fig
+# Test that get_usempl_data() delivers the right structures and can download
+# the data from the internet
+def test_get_usempl_data(end_date_str="2022-12-15"):
+    data_tuple = usempl.get_usempl_data(end_date_str=end_date_str)
+    assert len(data_tuple) == 8
+    (
+        usempl_pk,
+        end_date_str2,
+        peak_vals,
+        peak_dates,
+        rec_label_yr_lst,
+        rec_label_yrmth_lst,
+        rec_beg_yrmth_lst,
+        maxdate_rng_lst,
+    ) = data_tuple
+    assert usempl_pk.to_numpy().shape == (184, 46)
+    assert end_date_str2 == "2022-11-01"
+    assert len(peak_vals) == 15
+    assert len(peak_dates) == 15
+    assert len(rec_label_yr_lst) == 15
+    assert len(rec_label_yrmth_lst) == 15
+    assert len(rec_beg_yrmth_lst) == 15
+    assert len(maxdate_rng_lst) == 15
+
 
 # Test that usempl_npp() function returns html figure and valid string and
 # saves html figure file and two csv files.
@@ -61,7 +76,7 @@ def test_html_fig(
     # The case when usempl_end_date == 'today' and download_from_internet ==
     # False must be skipped because we don't have the data saved for every date
     if usempl_end_date == "today" and not download_from_internet:
-        pytest.skip("Invalid case")
+        print("Successful test, skipping invalid case")
         assert True
     else:
         fig, end_date_str = usempl.usempl_npp(
