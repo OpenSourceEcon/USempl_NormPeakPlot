@@ -32,7 +32,7 @@ def validate(date_text):
 
 # Test that get_usempl_data() delivers the right structures and can download
 # the data from the internet
-def test_get_usempl_data(end_date_str="2022-12-15"):
+def test_get_usempl_data(end_date_str="2022-11-15"):
     data_tuple = usempl.get_usempl_data(end_date_str=end_date_str)
     assert len(data_tuple) == 8
     (
