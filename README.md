@@ -5,6 +5,9 @@
 [![codecov](https://codecov.io/gh/OpenSourceEcon/USempl_NormPeakPlot/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenSourceEcon/USempl_NormPeakPlot)
 
 # Normalized Peak Plot of U.S. Nonfarm Payroll Employment (PAYEMS)
+
+**[This repository was archived on 2024-Feb-14. All new development is in the [https://github.com/OpenSourceEcon/usempl_plots](https://github.com/OpenSourceEcon/usempl_plots) repository.]**
+
 The code in this repository allows the user to create a normalized peak plot of U.S. nonfarm payroll employment (PAYEMS, seasonally adjusted) over the last 15 recessions, from the Great Depression (Aug. 1929 to Mar. 1933) to the most recent COVID-19 recession (Feb. 2020 to Apr. 2020). The dynamic version of this plot, which is updated regularly, is available to manipulate and explore at [https://www.oselab.org/gallery/usempl_npp](https://www.oselab.org/gallery/usempl_npp). The core maintainer of this repository is [Richard Evans](https://sites.google.com/site/rickecon/) ([@RickEcon](https://github.com/rickecon)).
 
 A normalized peak plot takes the maximum level of U.S. payroll employment at the beginning of a recession (within two months of the NBER declared beginning month) and normalizes the entire series so that the value at that peak equals 1.0. As such, the normalized time series shows the percent change from that peak. This is an intuitive way to compare the progression of nonfarm employment across recessions. The following figure is a screen shot of the normalized peak plot of the PAYEMS series from data downloaded on August 9, 2023 (most recent employment data is July 2023).
